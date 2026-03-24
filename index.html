@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🍕 Fracciones Visuales</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FFF8EE;
+    --card: #FFFFFF;
+    --primary: #FF6B35;
+    --secondary: #4ECDC4;
+    --accent: #FFD93D;
+    --purple: #9B5DE5;
+    --green: #6BCB77;
+    --text: #2D2D2D;
+    --muted: #888;
+    --shadow: 0 8px 32px rgba(0,0,0,0.10);
+    --radius: 24px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0 0 40px;
+  }
+
+  header {
+    background: linear-gradient(135deg, var(--primary) 0%, #FF8C42 100%);
+    color: white;
+    text-align: center;
+    padding: 28px 20px 24px;
+    border-radius: 0 0 32px 32px;
+    box-shadow: 0 6px 24px rgba(255,107,53,0.3);
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 160px; height: 160px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 50%;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -50px; left: -30px;
+    width: 120px; height: 120px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 50%;
+  }
+  header h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.8rem, 6vw, 2.8rem);
+    letter-spacing: 1px;
+    position: relative;
+  }
+  header p {
+    font-size: clamp(0.9rem, 3vw, 1.1rem);
+    opacity: 0.9;
+    margin-top: 6px;
+    font-weight: 600;
+    position: relative;
+  }
+
+  .main {
+    max-width: 780px;
+    margin: 30px auto 0;
+    padding: 0 16px;
+  }
+
+  /* INPUT SECTION */
+  .input-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+    border: 2px solid #FFE0CC;
+  }
+
+  .input-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.2rem;
+    color: var(--primary);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .fraction-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .fraction-visual-input {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .fraction-visual-input label {
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+  }
+
+  .spinner-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .spin-btn {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    border: 3px solid #FFD0B5;
+    background: #FFF5EE;
+    color: var(--primary);
+    font-size: 1.4rem;
+    font-weight: 900;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    line-height: 1;
+  }
+  .spin-btn:active, .spin-btn:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    transform: scale(0.93);
+  }
+
+  .spin-value {
+    width: 64px;
+    height: 64px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 2rem;
+    text-align: center;
+    border: 3px solid #FFD0B5;
+    border-radius: 16px;
+    background: #FFF5EE;
+    color: var(--primary);
+    outline: none;
+    transition: all 0.2s;
+    -moz-appearance: textfield;
+  }
+  .spin-value:focus {
+    border-color: var(--primary);
+    background: #FFF;
+    box-shadow: 0 0 0 4px rgba(255,107,53,0.12);
+  }
+  .spin-value::-webkit-inner-spin-button,
+  .spin-value::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+  .fraction-bar-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 3rem;
+    color: var(--text);
+    gap: 4px;
+  }
+  .fraction-bar-display .top { color: var(--primary); }
+  .fraction-bar-display .line { width: 50px; height: 4px; background: var(--text); border-radius: 2px; }
+  .fraction-bar-display .bottom { color: var(--secondary); }
+
+  .fraction-equals { font-family: 'Fredoka One', cursive; font-size: 2rem; color: var(--accent); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15)); }
+  .fraction-decimal { font-family: 'Fredoka One', cursive; font-size: 1.6rem; color: var(--purple); }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 12px 10px;
+    border: 3px solid transparent;
+    border-radius: 16px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    cursor: pointer;
+    background: var(--card);
+    color: var(--muted);
+    transition: all 0.22s;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.07);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .tab-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.10); }
+  .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 6px 20px rgba(255,107,53,0.3); }
+  .tab-btn.active.bar { background: var(--secondary); border-color: var(--secondary); box-shadow: 0 6px 20px rgba(78,205,196,0.3); }
+  .tab-btn.active.both { background: var(--purple); border-color: var(--purple); box-shadow: 0 6px 20px rgba(155,93,229,0.3); }
+
+  /* VISUALIZATION CARD */
+  .viz-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 28px 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    min-height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    transition: all 0.3s;
+    border: 2px solid #EEF;
+  }
+
+  /* ERROR */
+  .error-msg {
+    display: none;
+    background: #FFF0F0;
+    border: 2px solid #FFB3B3;
+    border-radius: 16px;
+    padding: 16px 20px;
+    color: #D44;
+    font-weight: 700;
+    font-size: 1rem;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  /* ====== PIZZA SVG ====== */
+  #pizza-container svg {
+    filter: drop-shadow(0 8px 24px rgba(0,0,0,0.13));
+    transition: all 0.4s cubic-bezier(.34,1.56,.64,1);
+  }
+
+  /* ====== BAR ====== */
+  .bar-container {
+    width: 100%;
+    max-width: 600px;
+  }
+  .bar-label {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    margin-bottom: 12px;
+    color: var(--text);
+    text-align: center;
+  }
+  .bar-track {
+    display: flex;
+    border-radius: 16px;
+    overflow: hidden;
+    height: 72px;
+    border: 3px solid #DDD;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  }
+  .bar-segment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.5s cubic-bezier(.34,1.56,.64,1);
+    position: relative;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.2rem;
+    color: white;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+  .bar-segment:not(:last-child) { border-right: 3px solid rgba(255,255,255,0.5); }
+  .bar-dots {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .bar-dot {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 3px solid;
+    transition: all 0.4s;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.75rem;
+  }
+  .bar-dot.filled { color: white !important; }
+
+  /* BOTH VIEW */
+  .both-container {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+  }
+
+  /* EXPLANATION */
+  .explanation {
+    background: linear-gradient(135deg, #F0F9FF, #E8F8F5);
+    border-radius: 20px;
+    padding: 20px 22px;
+    margin-top: 16px;
+    border-left: 5px solid var(--secondary);
+    font-size: 0.97rem;
+    line-height: 1.7;
+    font-weight: 600;
+    color: #2D5A5A;
+    width: 100%;
+  }
+  .explanation strong { color: var(--primary); font-size: 1.05rem; }
+
+  /* COUNTER */
+  .counter-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .counter-chip {
+    background: var(--accent);
+    border-radius: 50px;
+    padding: 8px 18px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    color: #333;
+    box-shadow: 0 4px 12px rgba(255,217,61,0.4);
+  }
+
+  /* MULTIPLE FRACTIONS */
+  .compare-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 22px 20px;
+    box-shadow: var(--shadow);
+    border: 2px solid #EEF;
+  }
+  .compare-title {
+    font-family: 'Fredoka One', cursive;
+    color: var(--purple);
+    font-size: 1.1rem;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .compare-bars { display: flex; flex-direction: column; gap: 14px; }
+  .compare-row { display: flex; align-items: center; gap: 12px; }
+  .compare-fraction-label {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    min-width: 42px;
+    text-align: center;
+    color: var(--text);
+    display: flex; flex-direction: column; align-items: center; gap: 1px;
+  }
+  .compare-fraction-label span { display: block; }
+  .compare-fraction-label .cf-line { width: 28px; height: 3px; background: currentColor; border-radius: 2px; margin: 2px 0; }
+  .compare-bar-outer {
+    flex: 1; height: 36px; background: #F0F0F0; border-radius: 100px; overflow: hidden;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.07);
+  }
+  .compare-bar-inner {
+    height: 100%; border-radius: 100px;
+    transition: width 0.6s cubic-bezier(.34,1.56,.64,1);
+    display: flex; align-items: center; justify-content: flex-end; padding-right: 10px;
+    font-family: 'Fredoka One', cursive; font-size: 0.85rem; color: white;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+  .compare-pct { font-family: 'Fredoka One', cursive; font-size: 0.9rem; min-width: 44px; text-align: right; color: var(--muted); }
+
+  footer {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🍕 Fracciones Visuales</h1>
+  <p>Ingresá el numerador y denominador — ¡y mirá la magia!</p>
+</header>
+
+<div class="main">
+
+  <!-- INPUT CARD -->
+  <div class="input-card">
+    <div class="input-title">✏️ Escribí tu fracción</div>
+    <div class="fraction-input-wrapper">
+      <div class="fraction-visual-input">
+        <label>Numerador</label>
+        <div class="spinner-group">
+          <button class="spin-btn" onclick="spin('num',-1)">−</button>
+          <input class="spin-value" type="number" id="num" value="3" min="0" max="24" inputmode="numeric" pattern="[0-9]*">
+          <button class="spin-btn" onclick="spin('num',1)">+</button>
+        </div>
+      </div>
+      <div class="fraction-bar-display">
+        <span class="top" id="display-num">3</span>
+        <span class="line"></span>
+        <span class="bottom" id="display-den">4</span>
+      </div>
+      <div class="fraction-visual-input">
+        <label>Denominador</label>
+        <div class="spinner-group">
+          <button class="spin-btn" onclick="spin('den',-1)">−</button>
+          <input class="spin-value" type="number" id="den" value="4" min="1" max="24" inputmode="numeric" pattern="[0-9]*">
+          <button class="spin-btn" onclick="spin('den',1)">+</button>
+        </div>
+      </div>
+      <span class="fraction-equals">=</span>
+      <span class="fraction-decimal" id="decimal-result">0.75</span>
+    </div>
+  </div>
+
+  <!-- ERROR -->
+  <div class="error-msg" id="error-msg">⚠️ El denominador no puede ser cero, y el numerador no puede ser mayor al denominador.</div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" id="tab-pizza" onclick="setTab('pizza')">🍕 Pizza</button>
+    <button class="tab-btn bar" id="tab-bar" onclick="setTab('bar')">📊 Barrita</button>
+    <button class="tab-btn both" id="tab-both" onclick="setTab('both')">🔀 Los dos</button>
+  </div>
+
+  <!-- VIZ CARD -->
+  <div class="viz-card" id="viz-card">
+    <div id="pizza-container"></div>
+    <div id="bar-container" style="display:none; width:100%;"></div>
+    <div id="both-container" style="display:none; width:100%;"></div>
+    <div class="explanation" id="explanation"></div>
+  </div>
+
+  <!-- COMPARADOR -->
+  <div class="compare-card">
+    <div class="compare-title">📐 Comparador de fracciones equivalentes</div>
+    <div class="compare-bars" id="compare-bars"></div>
+  </div>
+
+  <footer>Herramienta educativa para 2° año · Hecha con ❤️</footer>
+</div>
+
+<script>
+// ====== COLORS ======
+const COLORS = [
+  '#FF6B35','#4ECDC4','#9B5DE5','#FFD93D','#6BCB77',
+  '#F7A8A8','#70C1B3','#B5EAD7','#FFDAC1','#C7CEEA',
+  '#FF9AA2','#B5B9FF','#85E89D','#FFDF7E','#FF8B94'
+];
+
+let currentTab = 'pizza';
+
+function setTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  if(tab==='pizza') document.getElementById('tab-pizza').classList.add('active');
+  if(tab==='bar') document.getElementById('tab-bar').classList.add('active');
+  if(tab==='both') document.getElementById('tab-both').classList.add('active');
+  render();
+}
+
+function getValues() {
+  const n = parseInt(document.getElementById('num').value) || 0;
+  const d = parseInt(document.getElementById('den').value) || 0;
+  return { n, d };
+}
+
+function validate(n, d) {
+  if(d <= 0 || n < 0 || n > d || n > 24 || d > 24) return false;
+  return true;
+}
+
+function updateDisplay(n, d) {
+  document.getElementById('display-num').textContent = n;
+  document.getElementById('display-den').textContent = d;
+  if(d > 0) {
+    const dec = (n/d).toFixed(2).replace(/\.?0+$/, '');
+    document.getElementById('decimal-result').textContent = dec;
+  }
+}
+
+// ====== PIZZA SVG ======
+function makePizza(n, d, size=220) {
+  const cx = size/2, cy = size/2, r = size/2 - 10;
+  const startAngle = -Math.PI/2;
+  let paths = '';
+
+  for(let i = 0; i < d; i++) {
+    const a1 = startAngle + (i/d)*2*Math.PI;
+    const a2 = startAngle + ((i+1)/d)*2*Math.PI;
+    const x1 = cx + r*Math.cos(a1), y1 = cy + r*Math.sin(a1);
+    const x2 = cx + r*Math.cos(a2), y2 = cy + r*Math.sin(a2);
+    const large = (a2-a1) > Math.PI ? 1 : 0;
+    const filled = i < n;
+    const baseColor = filled ? COLORS[i % COLORS.length] : '#E8E8E8';
+    const strokeC = filled ? darken(COLORS[i % COLORS.length], 30) : '#CCC';
+    
+    // Wedge with slight pop
+    const scl = filled ? 1.0 : 0.97;
+    const tx = cx*(1-scl) + (filled ? Math.cos((a1+a2)/2)*7 : 0);
+    const ty = cy*(1-scl) + (filled ? Math.sin((a1+a2)/2)*7 : 0);
+    
+    let wedgePath;
+    if(d === 1) {
+      wedgePath = `M${cx},${cy} m${tx},${ty} A${r},${r} 0 1,1 ${x1+0.001},${y1+0.001}`;
+      wedgePath = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${baseColor}" stroke="${strokeC}" stroke-width="2.5" opacity="1"/>`;
+      paths += wedgePath;
+    } else {
+      paths += `<path transform="translate(${tx},${ty})" d="M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${large},1 ${x2},${y2} Z"
+        fill="${baseColor}" stroke="${strokeC}" stroke-width="2.5" opacity="${filled?1:0.5}">
+        <animate attributeName="opacity" values="${filled?'0.3':'0.5'};${filled?1:0.5}" dur="0.5s" fill="freeze"/>
+      </path>`;
+    }
+  }
+
+  // Pizza texture lines (crust detail)
+  const crustDetails = d > 1 ? Array.from({length:d}, (_,i) => {
+    const a = startAngle + (i/d)*2*Math.PI;
+    const x = cx + r*Math.cos(a), y = cy + r*Math.sin(a);
+    return `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="rgba(0,0,0,0.08)" stroke-width="1"/>`;
+  }).join('') : '';
+
+  // Outer crust
+  const crust = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#C8A26A" stroke-width="10" opacity="0.5"/>`;
+  // Shine
+  const shine = `<ellipse cx="${cx-r*0.25}" cy="${cy-r*0.3}" rx="${r*0.18}" ry="${r*0.1}" fill="rgba(255,255,255,0.25)" transform="rotate(-30,${cx},${cy})"/>`;
+
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="shadow"><feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="rgba(0,0,0,0.18)"/></filter>
+    </defs>
+    <g filter="url(#shadow)">
+      ${paths}
+      ${crust}
+      ${crustDetails}
+      ${shine}
+    </g>
+  </svg>`;
+}
+
+// ====== BAR ======
+function makeBar(n, d, container, small=false) {
+  const h = small ? 44 : 72;
+  const segW = (100/d).toFixed(3);
+  let segs = '';
+  let dots = '';
+  for(let i=0; i<d; i++) {
+    const filled = i<n;
+    const col = filled ? COLORS[i%COLORS.length] : '#E0E0E0';
+    const label = !small ? (filled ? (i===0||i===d-1||d<=8 ? `${i+1}` : '') : '') : '';
+    segs += `<div class="bar-segment" style="width:${segW}%;background:${col};border-right-color:rgba(255,255,255,0.6);">${label}</div>`;
+    if(!small){
+      const bc = filled ? col : '#D0D0D0';
+      dots += `<div class="bar-dot ${filled?'filled':''}" style="border-color:${bc};background:${filled?col:'transparent'};color:${filled?'white':bc};">${i+1}</div>`;
+    }
+  }
+  container.innerHTML = `
+    <div class="bar-label">📊 Cada cuadradito es <strong>1/${d}</strong> del total</div>
+    <div class="bar-track">${segs}</div>
+    ${!small ? `<div class="bar-dots">${dots}</div>` : ''}
+  `;
+}
+
+// ====== COMPARADOR ======
+function makeCompare(n, d) {
+  const fractions = [
+    {label:`${n}/${d}`, n, d, color: COLORS[0]},
+    {label:`${Math.floor(d/4)}/${d}`, n:Math.floor(d/4), d, color:COLORS[1]},
+    {label:`1/2`, n:1, d:2, color:COLORS[2]},
+    {label:`1/1`, n:1, d:1, color:COLORS[3]},
+  ].filter((f,i)=>i===0||(f.n<=f.d && f.d>0));
+
+  const html = fractions.map(f => {
+    const pct = Math.min((f.n/f.d)*100,100);
+    return `<div class="compare-row">
+      <div class="compare-fraction-label" style="color:${f.color}">
+        <span>${f.n}</span><span class="cf-line"></span><span>${f.d}</span>
+      </div>
+      <div class="compare-bar-outer">
+        <div class="compare-bar-inner" style="width:${pct}%;background:${f.color};">
+          ${pct>12?`${pct.toFixed(0)}%`:''}
+        </div>
+      </div>
+      <div class="compare-pct">${pct<12?pct.toFixed(0)+'%':''}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('compare-bars').innerHTML = html;
+}
+
+// ====== EXPLANATION ======
+function makeExplanation(n, d) {
+  const pct = ((n/d)*100).toFixed(1).replace(/\.0$/,'');
+  const rest = d - n;
+  let extra = '';
+  if(n === 0) extra = '¡La pizza no tiene ninguna porción tomada todavía! 🍕';
+  else if(n === d) extra = '¡Fracción completa! El entero es igual a 1. 🎉';
+  else if(n*2 === d) extra = '¡Es exactamente la mitad! 🌓';
+  else if(n < d/2) extra = `Falta más de la mitad todavía.`;
+  else extra = `¡Ya se tomó más de la mitad!`;
+
+  return `<div class="explanation">
+    🍕 Dividimos en <strong>${d} partes iguales</strong> y tomamos <strong>${n} parte${n!==1?'s':''}</strong>.<br>
+    ✅ Partes tomadas: <strong>${n}</strong> &nbsp;|&nbsp; ❌ Partes que quedan: <strong>${rest}</strong><br>
+    📈 Eso representa el <strong>${pct}%</strong> del total. ${extra}
+  </div>`;
+}
+
+// ====== RENDER ======
+function render() {
+  const {n, d} = getValues();
+  const errEl = document.getElementById('error-msg');
+  
+  if(!validate(n,d)) {
+    errEl.style.display = 'block';
+    document.getElementById('pizza-container').innerHTML = '';
+    document.getElementById('bar-container').innerHTML = '';
+    document.getElementById('both-container').innerHTML = '';
+    document.getElementById('explanation').innerHTML = '';
+    return;
+  }
+  errEl.style.display = 'none';
+  updateDisplay(n,d);
+
+  const pc = document.getElementById('pizza-container');
+  const bc = document.getElementById('bar-container');
+  const bothC = document.getElementById('both-container');
+
+  const expHtml = makeExplanation(n,d);
+
+  if(currentTab === 'pizza') {
+    pc.style.display='flex'; pc.style.flexDirection='column'; pc.style.alignItems='center';
+    bc.style.display='none';
+    bothC.style.display='none';
+    const sz = Math.min(window.innerWidth-80, 260);
+    pc.innerHTML = makePizza(n, d, sz);
+    document.getElementById('explanation').innerHTML = expHtml;
+  } else if(currentTab === 'bar') {
+    pc.style.display='none';
+    bc.style.display='block'; bc.style.width='100%';
+    bothC.style.display='none';
+    makeBar(n,d,bc);
+    document.getElementById('explanation').innerHTML = expHtml;
+  } else {
+    pc.style.display='none';
+    bc.style.display='none';
+    bothC.style.display='flex'; bothC.style.flexDirection='column'; bothC.style.alignItems='center'; bothC.style.gap='20px';
+    const sz = Math.min(window.innerWidth-80, 200);
+    bothC.innerHTML = `
+      <div style="display:flex;gap:28px;align-items:center;flex-wrap:wrap;justify-content:center;">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+          <div style="font-family:'Fredoka One',cursive;color:var(--primary);font-size:1rem;">🍕 Pizza</div>
+          ${makePizza(n,d,sz)}
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;flex:1;min-width:200px;">
+          <div style="font-family:'Fredoka One',cursive;color:var(--secondary);font-size:1rem;">📊 Barrita</div>
+          <div id="bar-inner" style="width:100%;"></div>
+        </div>
+      </div>`;
+    makeBar(n,d,document.getElementById('bar-inner'), false);
+    document.getElementById('explanation').innerHTML = expHtml;
+  }
+
+  makeCompare(n,d);
+}
+
+// ====== UTILS ======
+function darken(hex, amt) {
+  const num = parseInt(hex.replace('#',''),16);
+  const r = Math.max((num>>16)-amt,0);
+  const g = Math.max(((num>>8)&0xff)-amt,0);
+  const b = Math.max((num&0xff)-amt,0);
+  return '#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+
+// ====== SPIN FUNCTION (inline onclick, max iOS compatibility) ======
+function spin(id, delta) {
+  var el = document.getElementById(id);
+  var val = parseInt(el.value) || 0;
+  var mn = parseInt(el.min) || 0;
+  var mx = parseInt(el.max) || 24;
+  val = val + delta;
+  if (val < mn) val = mn;
+  if (val > mx) val = mx;
+  el.value = val;
+  render();
+}
+
+// Fallback for manual typing
+document.getElementById('num').onchange = render;
+document.getElementById('num').onkeyup  = render;
+document.getElementById('den').onchange = render;
+document.getElementById('den').onkeyup  = render;
+
+// Initial render
+render();
+</script>
+</body>
+</html>

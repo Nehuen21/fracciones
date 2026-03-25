@@ -430,6 +430,7 @@
       </div>
       <span class="fraction-equals">=</span>
       <span class="fraction-decimal" id="decimal-result">0.75</span>
+      <label>(Decimal)</label>
     </div>
   </div>
 
@@ -451,22 +452,14 @@
     <div class="explanation" id="explanation"></div>
   </div>
 
-  <!-- COMPARADOR -->
-  <div class="compare-card">
-    <div class="compare-title">📐 Comparador de fracciones equivalentes</div>
-    <div class="compare-bars" id="compare-bars"></div>
-  </div>
+  
 
   <footer>Herramienta educativa para 2° año · Hecha con ❤️</footer>
 </div>
 
 <script>
 // ====== COLORS ======
-const COLORS = [
-  '#FF6B35','#4ECDC4','#9B5DE5','#FFD93D','#6BCB77',
-  '#F7A8A8','#70C1B3','#B5EAD7','#FFDAC1','#C7CEEA',
-  '#FF9AA2','#B5B9FF','#85E89D','#FFDF7E','#FF8B94'
-];
+const COLORS = Array(24).fill('#9B5DE5');
 
 let currentTab = 'pizza';
 
